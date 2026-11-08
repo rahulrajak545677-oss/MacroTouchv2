@@ -1,65 +1,20 @@
-
 name: Build APK
-
-on:
-  push:
-    branches: [main]
-  workflow_dispatch:
-
+on: [push, workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
       - name: Unzip project
-        shell: bash
-        run: |
-          ZIP_FILE="$(find . -maxdepth 1 -type f -iname '*.zip' -print -quit)"
-
-          if [ -z "$ZIP_FILE" ]; then
-            echo "ZIP file not found!"
-            exit 1
-          fi
-
-          echo "Extracting: $ZIP_FILE"
-          unzip -q "$ZIP_FILE" -d .
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-
-      - name: Locate Android project
-        shell: bash
-        run: |
-          PROJECT_DIR="$(find . -type f -name gradlew -print -quit)"
-
-          if [ -z "$PROJECT_DIR" ]; then
-            echo "Gradle wrapper not found!"
-            exit 1
-          fi
-
-          PROJECT_DIR="$(dirname "$PROJECT_DIR")"
-          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
-          echo "Project found: $PROJECT_DIR"
-
-      - name: Build APK
-        working-directory: ${{ env.PROJECT_DIR }}
-        run: |
-          chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+        run: unzip -q "Free Fire.zip"
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 17 }
+      - uses: gradle/actions/setup-gradle@v3
+        with: { gradle-version: 8.7 }
+      - name: Build
+        working-directory: MacroTouch
+        run: gradle assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
         with:
           name: MacroTouch-APK
-          path: '**/build/outputs/apk/debug/*.apk'
-          if-no-files-found: error
-          
+          path: MacroTouch/app/build/outputs/apk/debug/app-debug.apk
