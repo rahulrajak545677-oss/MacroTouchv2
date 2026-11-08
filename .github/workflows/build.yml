@@ -6,8 +6,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Unzip project
-        run: unzip -q "Free Fire.zip".
-      - uses: actions/setup-java@v4
+        run: unzip -q "Free Fire.zip"
+       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 17 }
       - uses: gradle/actions/setup-gradle@v3
         with: { gradle-version: 8.7 }
