@@ -6,7 +6,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Unzip project
-        run: unzip -q "Free Fire.zip"
+  run: |
+    ZIP_FILE=$(find . -maxdepth 1 -type f -iname "*.zip" -print -quit)
+    if [ -z "$ZIP_FILE" ]; then
+      echo "ZIP file not found!"
+      exit 1
+    fi
+    echo "Extracting: $ZIP_FILE"
+    unzip -q "$ZIP_FILE" -d .
+    
        - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 17 }
       - uses: gradle/actions/setup-gradle@v3
